@@ -1,19 +1,20 @@
 package com.example.automailer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import com.example.automailer.config.ExtractionQueryConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.example.automailer.service.ReportService;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-public class AutomailerApplication  {
+@EnableScheduling
+@EnableConfigurationProperties(ExtractionQueryConfig.class)
+public class AutoMailerApplication  {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(AutomailerApplication.class, args);
+
+        SpringApplication.run(AutoMailerApplication.class, args);
     }
 
     }
