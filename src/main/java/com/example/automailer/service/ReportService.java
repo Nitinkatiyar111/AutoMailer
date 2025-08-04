@@ -1,13 +1,14 @@
 package com.example.automailer.service;
 
+import com.example.automailer.config.ExtractionQueryConfig;
+import com.example.automailer.util.FileWriterUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Service
@@ -15,32 +16,31 @@ import java.util.Map;
 public class ReportService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ExtractionQueryConfig extractionQueryConfig;
+    private final FileWriterUtil fileWriterUtil;
 
-    private final JavaMailSender mailSender;
+    @Scheduled(cron = "0 0 7 * * *")
+    public void generateReport() {
+        Map<String, Integer> resultMap = new LinkedHashMap<>();
 
-    @Value("${report.query}")
-    private String reportQuery;
+        for (Map.Entry<String, String> entry : extractionQueryConfig.getQueries().entrySet()) {
+            String label = entry.getKey();
+            String sql = entry.getValue();
 
-    @Value("${mail.info.sendTo}")
-    private String mailTo;
-
-    @Value("${mail.info.cc}")
-    private String mailCc;
-
-    public void sendReport() {
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(reportQuery);
-        StringBuilder sb = new StringBuilder("Report Output:\n\n");
-
-        for (Map<String, Object> row : rows) {
-            sb.append(row).append("\n");
+            try {
+                Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+                resultMap.put(label, count);
+            } catch (Exception e) {
+                resultMap.put(label, -1); // Error fallback
+            }
         }
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailTo);
-        message.setCc(mailCc);
-        message.setSubject("Report Output - COS_SM");
-        message.setText(sb.toString());
-
-        mailSender.send(message);
+        fileWriterUtil.writeToExcel(resultMap, extractionQueryConfig.getOutputPath());
+        System.out.println("Excel report generated: " + extractionQueryConfig.getOutputPath());
+    }
+    @PostConstruct
+    public void triggerReportOnStartup() {
+        System.out.println("Triggering report at startup...");
+        generateReport();
     }
 }

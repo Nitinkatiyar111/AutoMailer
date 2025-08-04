@@ -1,0 +1,10 @@
+INSERT INTO Employee (id, name, status) VALUES (1, 'Alice', 'active');
+INSERT INTO Employee (id, name, status) VALUES (2, 'Bob', 'inactive');
+INSERT INTO Employee (id, name, status) VALUES (3, 'Charlie', 'active');
+INSERT INTO Employee (id, name, status) VALUES (4, 'Diana', 'inactive');
+INSERT INTO Employee (id, name, status) VALUES (5, 'Eve', 'active');
+INSERT INTO Employee (id, name, status) VALUES (6, 'Frank', 'inactive');
+INSERT INTO Employee (id, name, status) VALUES (7, 'Grace', 'active');
+INSERT INTO Employee (id, name, status) VALUES (8, 'Hank', 'inactive');
+INSERT INTO Employee (id, name, status) VALUES (9, 'Ivy', 'active');
+INSERT INTO Employee (id, name, status) VALUES (10, 'John', 'inactive');
